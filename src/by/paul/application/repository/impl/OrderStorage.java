@@ -14,10 +14,11 @@ import java.util.Objects;
 
 public class OrderStorage implements Storage<Order> {
     private static List<Order> orderList;
+
     private static final OrderParser parser = new OrderParser();
+
     private static final WriterUtil<Order> writerUtil = new WriterUtil<>();
     private final String filePath;
-
     public OrderStorage(List<Order> orderList) {
         OrderStorage.orderList = orderList;
         this.filePath = ApplicationConstants.RESOURCES_PATH + "new_order_storage.csv";
@@ -35,6 +36,10 @@ public class OrderStorage implements Storage<Order> {
 
     private void changeCsvFile() {
         writerUtil.addData(filePath, orderList);
+    }
+
+    public static List<Order> getOrderList() {
+        return orderList;
     }
 
     public void createOrder(String customerName, String orderedBook, int amount, Double totalPrice) {
@@ -68,28 +73,28 @@ public class OrderStorage implements Storage<Order> {
         return ordersInPeriod;
     }
 
-    public List<Order> closedInPeriod(String startDate, String endDate) {
-        List<Order> ordersInPeriod = new ArrayList<>();
-        for (Order order : orderList) {
-            if (order.getCompletionDate().isBefore(LocalDate.parse(endDate)) && order.getCompletionDate().isAfter(LocalDate.parse(startDate))
-                    || order.getCompletionDate().isEqual(LocalDate.parse(startDate)) || order.getCompletionDate().isEqual(LocalDate.parse(endDate))) {
-                ordersInPeriod.add(order);
-            }
-        }
-        return ordersInPeriod;
-    }
-
-    public double earnedInPeriod(String startDate, String endDate) {
-        return closedInPeriod(startDate, endDate).stream()
-                .filter(order -> order.getStatus().equals("Done"))
-                .reduce(0.0, (a, order) -> a + order.getTotalPrice(), (aDouble, aDouble2) -> aDouble + aDouble2);
-    }
-
-    public double doneInPeriod(String startDate, String endDate) {
-        return closedInPeriod(startDate, endDate).stream()
-                .filter(order -> order.getStatus().equals("Done"))
-                .count();
-    }
+//    public List<Order> closedInPeriod(String startDate, String endDate) {
+//        List<Order> ordersInPeriod = new ArrayList<>();
+//        for (Order order : orderList) {
+//            if (order.getCompletionDate().isBefore(LocalDate.parse(endDate)) && order.getCompletionDate().isAfter(LocalDate.parse(startDate))
+//                    || order.getCompletionDate().isEqual(LocalDate.parse(startDate)) || order.getCompletionDate().isEqual(LocalDate.parse(endDate))) {
+//                ordersInPeriod.add(order);
+//            }
+//        }
+//        return ordersInPeriod;
+//    }
+//
+//    public double earnedInPeriod(String startDate, String endDate) {
+//        return closedInPeriod(startDate, endDate).stream()
+//                .filter(order -> order.getStatus().equals("Done"))
+//                .reduce(0.0, (a, order) -> a + order.getTotalPrice(), (aDouble, aDouble2) -> aDouble + aDouble2);
+//    }
+//
+//    public double doneInPeriod(String startDate, String endDate) {
+//        return closedInPeriod(startDate, endDate).stream()
+//                .filter(order -> order.getStatus().equals("Done"))
+//                .count();
+//    }
 
 
 

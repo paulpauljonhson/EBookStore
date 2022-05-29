@@ -28,11 +28,7 @@ public class BookService extends FormatService<Book> {
     }
 
     public List<Book> getUnsoldFor6Months() {
-        List<String> list = orderStorage.closedInPeriod(String.valueOf(LocalDate.now().minusMonths(6)), String.valueOf(LocalDate.now()))
-                .stream()
-                .map(Order::getBookName)
-                .collect(Collectors.toList());
-
+        List<String> list = new OrderService().getUnsoldFor6Months();
         return bookStorage.getList()
                 .stream()
                 .filter(book -> !list.contains(book.getBookName()) && book.isInStock())
