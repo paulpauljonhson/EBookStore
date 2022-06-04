@@ -8,6 +8,7 @@ import by.paul.application.service.output.BookOutput;
 import by.paul.application.service.output.OrderOutput;
 import by.paul.application.service.sort.BookSort;
 import ui.console.actions.actionOrder.OrderDoneInPeriodOfTimeByDate;
+import ui.console.menu.Builder;
 
 public class Main {
     public static void main(String[] args) {
@@ -44,8 +45,13 @@ public class Main {
 //        System.out.println(orderService.earnedInPeriod("2022-03-02", "2022-05-02"));
         //Список «залежавшихся» книг не проданы больше чем 6 мес. (сортировать по датепоступления, цене)
 
-        OrderDoneInPeriodOfTimeByDate orderDoneInPeriodOfTimeByDate = new OrderDoneInPeriodOfTimeByDate();
-        orderDoneInPeriodOfTimeByDate.execute();
+//        OrderDoneInPeriodOfTimeByDate orderDoneInPeriodOfTimeByDate = new OrderDoneInPeriodOfTimeByDate();
+//        orderDoneInPeriodOfTimeByDate.execute();
+
+        Builder builder = Builder.getInstance();
+        builder.getRootMenu();
+        System.out.println(builder.getMenuMap().containsKey("Request menu"));
+        System.out.println();
 
 //        bookOutput.showList();
 //        bookOutput.showSortedList(BookSort.BY_RELEASE_DATE.getComparator());

@@ -15,20 +15,24 @@ import java.util.Objects;
 
 public class Builder {
     private static Builder instance;
-    Map<String, Menu> menuMap = new HashMap<>();
+    private Map<String, Menu> menuMap = new HashMap<>();
     private Menu rootMenu;
 
     private Builder() {
-        rootMenu = BuildMenu();
     }
 
     public static Builder getInstance() {
         return Objects.requireNonNullElse(instance, new Builder());
     }
 
+    public Map<String, Menu> getMenuMap() {
+        return menuMap;
+    }
+
     public Menu BuildMenu() {
         rootMenu = new Menu();
         rootMenu.setName("Main Menu");
+        menuMap.putIfAbsent(rootMenu.getName(), rootMenu);
         rootMenu.addMenuItem(new MenuItem("Book Menu", () -> {
         }, CreateBookMenu()));
         rootMenu.addMenuItem(new MenuItem("Order Menu", () -> {
@@ -39,91 +43,113 @@ public class Builder {
     }
 
     public Menu getRootMenu() {
-        return rootMenu;
+        return BuildMenu();
     }
 
 
     private Menu CreateBookMenu() {
-        Menu bookMenu = new Menu();
-        bookMenu.setName("Book menu");
-        bookMenu.addMenuItem(new MenuItem("Show list of books", () -> {
-        }, BookOutputMenu()));
-        bookMenu.addMenuItem(new MenuItem("Return to main menu", () -> {
-        }, rootMenu));
-        menuMap.putIfAbsent(bookMenu.getName(), bookMenu);
-        return bookMenu;
+        if (menuMap.containsKey("Book menu")) return menuMap.get("Book menu");
+        else {
+            Menu bookMenu = new Menu();
+            bookMenu.setName("Book menu");
+            menuMap.putIfAbsent(bookMenu.getName(), bookMenu);
+            bookMenu.addMenuItem(new MenuItem("Show list of books", () -> {
+            }, CreateBookOutputMenu()));
+            bookMenu.addMenuItem(new MenuItem("Return to main menu", () -> {
+            }, rootMenu));
+            return bookMenu;
+        }
     }
 
-    private Menu BookOutputMenu() {
-        Menu bookOutputMenu = new Menu();
-        bookOutputMenu.setName("Book menu");
-        bookOutputMenu.addMenuItem(new MenuItem("Show sorted by ID", new BookOutputByID(), bookOutputMenu));
-        bookOutputMenu.addMenuItem(new MenuItem("Show sorted by Release Date", new BookOutputByReleaseDate(), bookOutputMenu));
-        bookOutputMenu.addMenuItem(new MenuItem("Show sorted by Price", new BookOutputByPrice(), bookOutputMenu));
-        bookOutputMenu.addMenuItem(new MenuItem("Show books in Stock", new BookOutputByStock(), bookOutputMenu));
-        bookOutputMenu.addMenuItem(new MenuItem("Return to Book menu", () -> {
-        }, menuMap.get("Book menu")));
-        return bookOutputMenu;
+    private Menu CreateBookOutputMenu() {
+        if (menuMap.containsKey("Book output menu")) return menuMap.get("Book output menu");
+        else {
+            Menu bookOutputMenu = new Menu();
+            bookOutputMenu.setName("Book output menu");
+            menuMap.putIfAbsent(bookOutputMenu.getName(), bookOutputMenu);
+            bookOutputMenu.addMenuItem(new MenuItem("Show sorted by ID", new BookOutputByID(), bookOutputMenu));
+            bookOutputMenu.addMenuItem(new MenuItem("Show sorted by Release Date", new BookOutputByReleaseDate(), bookOutputMenu));
+            bookOutputMenu.addMenuItem(new MenuItem("Show sorted by Price", new BookOutputByPrice(), bookOutputMenu));
+            bookOutputMenu.addMenuItem(new MenuItem("Show books in Stock", new BookOutputByStock(), bookOutputMenu));
+            bookOutputMenu.addMenuItem(new MenuItem("Return to Book menu", () -> {
+            }, menuMap.get("Book menu")));
+            return bookOutputMenu;
+        }
     }
 
     private Menu CreateOrderMenu() {
-        Menu orderMenu = new Menu();
-        orderMenu.setName("Order menu");
-        orderMenu.addMenuItem(new MenuItem("Show list of orders", () -> {
-        }, OrderOutputMenu()));
-        orderMenu.addMenuItem(new MenuItem("Return to main menu", () -> {
-        }, rootMenu));
-        menuMap.putIfAbsent(orderMenu.getName(), orderMenu);
-        return orderMenu;
+        if (menuMap.containsKey("Order menu")) return menuMap.get("Order menu");
+        else {
+            Menu orderMenu = new Menu();
+            orderMenu.setName("Order menu");
+            menuMap.putIfAbsent(orderMenu.getName(), orderMenu);
+            orderMenu.addMenuItem(new MenuItem("Show list of orders", () -> {
+            }, CreateOrderOutputMenu()));
+            orderMenu.addMenuItem(new MenuItem("Return to main menu", () -> {
+            }, rootMenu));
+            return orderMenu;
+        }
     }
 
-    private Menu OrderOutputMenu() {
-        Menu orderOutputMenu = new Menu();
-        orderOutputMenu.setName("Order output menu");
-        orderOutputMenu.addMenuItem(new MenuItem("Show sorted by ID", new OrderOutputById(), orderOutputMenu));
-        orderOutputMenu.addMenuItem(new MenuItem("Show sorted by Completion Date", new OrderOutputByCompletionDate(), orderOutputMenu));
-        orderOutputMenu.addMenuItem(new MenuItem("Show sorted by Total Price", new OrderOutputByTotalPrice(), orderOutputMenu));
-        orderOutputMenu.addMenuItem(new MenuItem("Show sorted by Status", () -> {
-        }, SortedByStatus()));
-        orderOutputMenu.addMenuItem(new MenuItem("Back", () -> {
-        }, menuMap.get("Order menu")));
-        menuMap.putIfAbsent(orderOutputMenu.getName(), orderOutputMenu);
+    private Menu CreateOrderOutputMenu() {
+        if (menuMap.containsKey("Order output menu")) return menuMap.get("Order output menu");
+        else {
+            Menu orderOutputMenu = new Menu();
+            orderOutputMenu.setName("Order output menu");
+            menuMap.putIfAbsent(orderOutputMenu.getName(), orderOutputMenu);
+            orderOutputMenu.addMenuItem(new MenuItem("Show sorted by ID", new OrderOutputById(), orderOutputMenu));
+            orderOutputMenu.addMenuItem(new MenuItem("Show sorted by Completion Date", new OrderOutputByCompletionDate(), orderOutputMenu));
+            orderOutputMenu.addMenuItem(new MenuItem("Show sorted by Total Price", new OrderOutputByTotalPrice(), orderOutputMenu));
+            orderOutputMenu.addMenuItem(new MenuItem("Show sorted by Status", () -> {
+            }, CreateOrderSortedByStatusMenu()));
+            orderOutputMenu.addMenuItem(new MenuItem("Back", () -> {
+            }, menuMap.get("Order menu")));
 //        orderOutputMenu.addMenuItem(new MenuItem("Show sorted by",  , orderOutputMenu));
-        return orderOutputMenu;
+            return orderOutputMenu;
+        }
     }
 
-    private Menu SortedByStatus() {
-        Menu sortedByStatus = new Menu();
-        sortedByStatus.setName("Sorted by status");
-        sortedByStatus.addMenuItem(new MenuItem("Show New First", new OrderOutputNewFirst(), sortedByStatus));
-        sortedByStatus.addMenuItem(new MenuItem("Show Done First", new OrderOutputDoneFirst(), sortedByStatus));
-        sortedByStatus.addMenuItem(new MenuItem("Show Cancelled First", new OrderOutputCancelledFirst(), sortedByStatus));
-        sortedByStatus.addMenuItem(new MenuItem("Back", () -> {
-        }, menuMap.get("Order output menu")));
-        menuMap.putIfAbsent("Sorted by status", sortedByStatus);
-        return sortedByStatus;
+    private Menu CreateOrderSortedByStatusMenu() {
+        if (menuMap.containsKey("Sorted by status")) return menuMap.get("Sorted by status");
+        else {
+            Menu sortedByStatus = new Menu();
+            sortedByStatus.setName("Sorted by status");
+            menuMap.putIfAbsent("Sorted by status", sortedByStatus);
+            sortedByStatus.addMenuItem(new MenuItem("Show New First", new OrderOutputNewFirst(), sortedByStatus));
+            sortedByStatus.addMenuItem(new MenuItem("Show Done First", new OrderOutputDoneFirst(), sortedByStatus));
+            sortedByStatus.addMenuItem(new MenuItem("Show Cancelled First", new OrderOutputCancelledFirst(), sortedByStatus));
+            sortedByStatus.addMenuItem(new MenuItem("Back", () -> {
+            }, menuMap.get("Order output menu")));
+            return sortedByStatus;
+        }
     }
 
     private Menu CreateRequestMenu() {
-        Menu requestMenu = new Menu();
-        requestMenu.setName("Request menu");
-        requestMenu.addMenuItem(new MenuItem("Show list of Requests", () -> {
-        }, RequestOutputMenu()));
-        requestMenu.addMenuItem(new MenuItem("Return to main menu", () -> {
-        }, rootMenu));
-        menuMap.putIfAbsent(requestMenu.getName(), requestMenu);
-        return requestMenu;
+        if (menuMap.containsKey("Request menu")) return menuMap.get("Request menu");
+        else {
+            Menu requestMenu = new Menu();
+            requestMenu.setName("Request menu");
+            menuMap.putIfAbsent(requestMenu.getName(), requestMenu);
+            requestMenu.addMenuItem(new MenuItem("Show list of Requests", () -> {
+            }, CreateRequestOutputMenu()));
+            requestMenu.addMenuItem(new MenuItem("Return to main menu", () -> {
+            }, rootMenu));
+            return requestMenu;
+        }
     }
 
-    private Menu RequestOutputMenu() {
-        Menu requestOutputMenu = new Menu();
-        requestOutputMenu.setName("Request output menu");
-        requestOutputMenu.addMenuItem(new MenuItem("Show sorted by ID", new RequestOutputByID(), requestOutputMenu));
-        requestOutputMenu.addMenuItem(new MenuItem("Show sorted by Amount of Requests", new RequestOutputByAmount(), requestOutputMenu));
-        requestOutputMenu.addMenuItem(new MenuItem("Show sorted by Alphabet", new RequestOutputByAlphabet(), requestOutputMenu));
-        requestOutputMenu.addMenuItem(new MenuItem("Back", () -> {}, menuMap.get("Request menu")));
-        return requestOutputMenu;
+    private Menu CreateRequestOutputMenu() {
+        if (menuMap.containsKey("Request output menu")) return menuMap.get("Request output menu");
+        else {
+            Menu requestOutputMenu = new Menu();
+            requestOutputMenu.setName("Request output menu");
+            menuMap.putIfAbsent(requestOutputMenu.getName(), requestOutputMenu);
+            requestOutputMenu.addMenuItem(new MenuItem("Show sorted by ID", new RequestOutputByID(), requestOutputMenu));
+            requestOutputMenu.addMenuItem(new MenuItem("Show sorted by Amount of Requests", new RequestOutputByAmount(), requestOutputMenu));
+            requestOutputMenu.addMenuItem(new MenuItem("Show sorted by Alphabet", new RequestOutputByAlphabet(), requestOutputMenu));
+            requestOutputMenu.addMenuItem(new MenuItem("Back", () -> {
+            }, menuMap.get("Request menu")));
+            return requestOutputMenu;
+        }
     }
-
-
 }
