@@ -1,6 +1,5 @@
 package ui.console.menu;
 
-import java.util.InputMismatchException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -30,11 +29,10 @@ public class MenuController {
                 navigator.navigate(index);
             } catch (IndexOutOfBoundsException e) {
                 if (index == 0) {
-                    System.out.println("so long, gay user");
+                    System.out.println("So long, dear user!");
                     break;
-                } else System.out.println("wrong namba");
+                } else System.out.println("Wrong number!");
             }
-//            System.out.println(builder.menuMap.);
             navigator.printMenu();
         }
     }

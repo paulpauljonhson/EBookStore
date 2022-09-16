@@ -1,5 +1,6 @@
 package ui.console.menu;
 
+import ui.console.actions.Exit;
 import ui.console.actions.actionBook.output.BookOutputByID;
 import ui.console.actions.actionBook.output.BookOutputByPrice;
 import ui.console.actions.actionBook.output.BookOutputByReleaseDate;
@@ -39,6 +40,7 @@ public class Builder {
         }, CreateOrderMenu()));
         rootMenu.addMenuItem(new MenuItem("Request Menu", () -> {
         }, CreateRequestMenu()));
+        rootMenu.addMenuItem(new MenuItem("Exit", new Exit(), null));
         return rootMenu;
     }
 
